@@ -418,7 +418,7 @@ export function Dashboard() {
                 onKeyDown={handleKeyDown}
               />
               <div className="flex items-center p-3 pt-0">
-                <Button type="submit" size="sm" className="ml-auto gap-1.5">
+                <Button type="submit" size="sm" className="ml-auto gap-1.5" disabled={!selectedModel || !inputMessage}>
                   Send Message
                   <CornerDownLeft className="size-3.5" />
                 </Button>
