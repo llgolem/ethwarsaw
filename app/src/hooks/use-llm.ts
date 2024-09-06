@@ -1,5 +1,4 @@
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useState } from 'react';
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -12,21 +11,32 @@ interface ChatCompletionRequest {
 }
 
 interface ChatCompletionResponse {
-  // Add the expected response structure here
-  // This is a placeholder and should be updated based on the actual API response
   choices: { message: ChatMessage }[];
 }
 
-export function useLLM() {
-  return useMutation({
-    mutationFn: async ({ message }: { message: string }) => {
+export function useLLM(selectedModel: "llama" | "qwen2" | null) {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const sendMessage = async (message: string): Promise<ChatMessage> => {
+    if (!selectedModel) {
+      throw new Error("No model selected");
+    }
+
+    const modelMap = {
+      llama: "llama3.1",
+      qwen2: "qwen2:0.5b",
+    };
+
+    setIsLoading(true);
+
+    try {
       const response = await fetch("http://localhost:11111/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "qwen2:0.5b",
+          model: modelMap[selectedModel],
           messages: [{ role: "user", content: message }],
         } as ChatCompletionRequest),
       });
@@ -35,15 +45,15 @@ export function useLLM() {
         throw new Error("Failed to get LLM response");
       }
 
-      return response.json() as Promise<ChatCompletionResponse>;
-    },
-    onError: (error: Error) => {
+      const data: ChatCompletionResponse = await response.json();
+      return data.choices[0].message;
+    } catch (error) {
       console.error("LLM error:", error);
-      toast.error(error.message);
-    },
-    onSuccess: (data) => {
-      console.log("LLM response received:", data);
-      // You can add additional success handling here if needed
-    },
-  });
+      return { role: "assistant", content: "Please select a model and try again." };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { sendMessage, isLoading };
 }
