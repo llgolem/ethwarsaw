@@ -1,10 +1,10 @@
 "use client"
 
-import { ConnectKitButton } from "connectkit"
+import { Dashboard } from "@/components/custom/dashboard-03"
 import { NextPage } from "next"
 
 const Home: NextPage = () => {
-  return <ConnectKitButton />
+  return <Dashboard />
 }
 
 export default Home
