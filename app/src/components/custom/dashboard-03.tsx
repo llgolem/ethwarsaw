@@ -29,8 +29,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog"
+import { useLLM } from "@/hooks/use-llm"
 
 export function Dashboard() {
+  const { mutate: sendMessage } = useLLM()
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
   )
@@ -48,11 +50,13 @@ export function Dashboard() {
     setEthExchangeRate(2000) // 1 ETH = 2000 credits
   }, [])
 
-  const handleSendMessage = (e: React.FormEvent) => {
+  const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (inputMessage.trim()) {
       setMessages([...messages, { role: "user", content: inputMessage.trim() }])
       setInputMessage("")
+      const response = await sendMessage({ message: inputMessage.trim() })
+      console.log(response)
       // Here you would typically call an API to get the AI response
       // For now, we'll just simulate a response after a short delay
       setTimeout(() => {
