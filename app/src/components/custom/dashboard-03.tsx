@@ -1,20 +1,5 @@
-import {
-  Bird,
-  CornerDownLeft,
-  LifeBuoy,
-  Mic,
-  Paperclip,
-  Rabbit,
-  Settings,
-  Settings2,
-  Share,
-  SquareTerminal,
-  SquareUser,
-  Triangle,
-  Turtle,
-  Plus,
-} from "lucide-react"
-import { useState } from "react"
+import { CornerDownLeft, Settings, Triangle, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -35,10 +20,15 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-
-
-export const description =
-  "An AI playground with a sidebar navigation and a main content area. The playground has a header with a settings drawer and a share button. The sidebar has navigation links and a user menu. The main content area shows a form to configure the model and messages."
+import { ConnectKitButton } from "connectkit"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog"
 
 export function Dashboard() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
@@ -47,7 +37,16 @@ export function Dashboard() {
   const [inputMessage, setInputMessage] = useState("")
   const [availableCredit, setAvailableCredit] = useState(100)
   const [creditToAdd, setCreditToAdd] = useState("")
-  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2" | null>(null)
+  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2" | null>(
+    null
+  )
+  const [ethExchangeRate, setEthExchangeRate] = useState(0)
+
+  useEffect(() => {
+    // Simulating fetching ETH exchange rate
+    // In a real application, you would fetch this from an API
+    setEthExchangeRate(2000) // 1 ETH = 2000 credits
+  }, [])
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault()
@@ -69,16 +68,19 @@ export function Dashboard() {
     e.preventDefault()
     const amount = parseFloat(creditToAdd)
     if (!isNaN(amount) && amount > 0) {
-      setAvailableCredit(prev => prev + amount)
+      setAvailableCredit((prev) => prev + amount)
       setCreditToAdd("")
     }
   }
 
   const getCreditCharge = () => {
     switch (selectedModel) {
-      case "llama": return 1
-      case "qwen2": return 0.5
-      default: return 0
+      case "llama":
+        return 1
+      case "qwen2":
+        return 0.5
+      default:
+        return 0
     }
   }
 
@@ -90,11 +92,58 @@ export function Dashboard() {
             <Triangle className="size-5 fill-foreground" />
           </Button>
         </div>
-       
       </aside>
       <div className="flex flex-col">
         <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-          <h1 className="text-xl font-semibold">Playground</h1>
+          <div className="flex items-center justify-between w-full">
+            <h1 className="text-xl font-semibold">Playground</h1>
+
+            <div className="flex items-center gap-2">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button>Credits: {availableCredit.toFixed(2)}</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Add Credits</DialogTitle>
+                    <DialogDescription>
+                      Add credits to your account. Current exchange rate: 1 ETH
+                      = {ethExchangeRate} credits
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleAddCredit} className="grid gap-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="add-credit-dialog">
+                        Amount (in credits)
+                      </Label>
+                      <Input
+                        id="add-credit-dialog"
+                        type="number"
+                        placeholder="Amount"
+                        value={creditToAdd}
+                        onChange={(e) => setCreditToAdd(e.target.value)}
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+                    <div className="text-sm text-muted-foreground">
+                      Equivalent:{" "}
+                      {creditToAdd
+                        ? (parseFloat(creditToAdd) / ethExchangeRate).toFixed(6)
+                        : "0"}{" "}
+                      ETH
+                    </div>
+                    <Button type="submit">
+                      <Plus className="size-4 mr-2" />
+                      Add Credits
+                    </Button>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              <ConnectKitButton />
+            </div>
+          </div>
           <Drawer>
             <DrawerTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -117,8 +166,15 @@ export function Dashboard() {
                     </legend>
                     <div className="grid gap-3">
                       <Label htmlFor="model-mobile">Model</Label>
-                      <Select onValueChange={(value: "llama" | "qwen2") => setSelectedModel(value)}>
-                        <SelectTrigger id="model-mobile" className="items-start [&_[data-description]]:hidden">
+                      <Select
+                        onValueChange={(value: "llama" | "qwen2") =>
+                          setSelectedModel(value)
+                        }
+                      >
+                        <SelectTrigger
+                          id="model-mobile"
+                          className="items-start [&_[data-description]]:hidden"
+                        >
                           <SelectValue placeholder="Select a model" />
                         </SelectTrigger>
                         <SelectContent>
@@ -149,23 +205,29 @@ export function Dashboard() {
                     </div>
                     {selectedModel && (
                       <div className="grid gap-3 p-3 border rounded-lg">
-                        <p className="text-sm font-medium">{selectedModel === "llama" ? "Llama 3.1" : "Qwen2"}</p>
+                        <p className="text-sm font-medium">
+                          {selectedModel === "llama" ? "Llama 3.1" : "Qwen2"}
+                        </p>
                         <p className="text-xs text-muted-foreground">
-                          {selectedModel === "llama" 
-                            ? "Advanced language model" 
+                          {selectedModel === "llama"
+                            ? "Advanced language model"
                             : "Efficient and fast model"}
                         </p>
-                        <p className="text-sm">Credit charge: {getCreditCharge()} credits per message</p>
+                        <p className="text-sm">
+                          Credit charge: {getCreditCharge()} credits per message
+                        </p>
                       </div>
                     )}
                   </fieldset>
-                  <fieldset className="grid gap-6 rounded-lg border p-4 mb-4">
+                  {/* <fieldset className="grid gap-6 rounded-lg border p-4 mb-4">
                     <legend className="-ml-1 px-1 text-sm font-medium">
                       Credits
                     </legend>
                     <div className="grid gap-3">
                       <Label>Available Credit</Label>
-                      <p className="text-sm font-medium">{availableCredit.toFixed(2)} credits</p>
+                      <p className="text-sm font-medium">
+                        {availableCredit.toFixed(2)} credits
+                      </p>
                     </div>
                     <div className="grid gap-3">
                       <Label htmlFor="add-credit-mobile">Add Credit</Label>
@@ -185,7 +247,7 @@ export function Dashboard() {
                         </Button>
                       </form>
                     </div>
-                  </fieldset>
+                  </fieldset> */}
                 </form>
               </div>
             </DrawerContent>
@@ -211,8 +273,15 @@ export function Dashboard() {
                 </legend>
                 <div className="grid gap-3">
                   <Label htmlFor="model">Model</Label>
-                  <Select onValueChange={(value: "llama" | "qwen2") => setSelectedModel(value)}>
-                    <SelectTrigger id="model" className="items-start [&_[data-description]]:hidden">
+                  <Select
+                    onValueChange={(value: "llama" | "qwen2") =>
+                      setSelectedModel(value)
+                    }
+                  >
+                    <SelectTrigger
+                      id="model"
+                      className="items-start [&_[data-description]]:hidden"
+                    >
                       <SelectValue placeholder="Select a model" />
                     </SelectTrigger>
                     <SelectContent>
@@ -232,7 +301,7 @@ export function Dashboard() {
                           <div className="grid gap-0.5">
                             <p>
                               <span className="font-medium text-foreground">
-                              Qwen2
+                                Qwen2
                               </span>
                             </p>
                           </div>
@@ -243,43 +312,49 @@ export function Dashboard() {
                 </div>
                 {selectedModel && (
                   <div className="grid gap-3 p-3 border rounded-lg">
-                    <p className="text-sm font-medium">{selectedModel === "llama" ? "Llama 3.1" : "Qwen2"}</p>
+                    <p className="text-sm font-medium">
+                      {selectedModel === "llama" ? "Llama 3.1" : "Qwen2"}
+                    </p>
                     <p className="text-xs text-muted-foreground">
-                      {selectedModel === "llama" 
-                        ? "Advanced language model" 
+                      {selectedModel === "llama"
+                        ? "Advanced language model"
                         : "Efficient and fast model"}
                     </p>
-                    <p className="text-sm">Credit charge: {getCreditCharge()} credits per message</p>
+                    <p className="text-sm">
+                      Credit charge: {getCreditCharge()} credits per message
+                    </p>
                   </div>
                 )}
               </fieldset>
-              <fieldset className="grid gap-6 rounded-lg border p-4 mb-4">
-              <legend className="-ml-1 px-1 text-sm font-medium">
-                Credits
-              </legend>
-              <div className="grid gap-3">
-                <Label>Available Credit</Label>
-                <p className="text-sm font-medium">{availableCredit.toFixed(2)} credits</p>
-              </div>
-              <div className="grid gap-3">
-                <Label htmlFor="add-credit">Add Credit</Label>
-                <form onSubmit={handleAddCredit} className="grid gap-2">
-                  <Input
-                    id="add-credit"
-                    type="number"
-                    placeholder="Amount"
-                    value={creditToAdd}
-                    onChange={(e) => setCreditToAdd(e.target.value)}
-                    min="0"
-                    step="0.01"
-                  />
-                  <Button size="sm">
-                    <Plus className="size-4 mr-2" />
-                    Add
-                  </Button>
-                </form>
-              </div>
-            </fieldset>
+              {/* <fieldset className="grid gap-6 rounded-lg border p-4 mb-4">
+                <legend className="-ml-1 px-1 text-sm font-medium">
+                  Credits
+                </legend>
+                <div className="grid gap-3">
+                  <Label>Available Credit</Label>
+                  <p className="text-sm font-medium">
+                    {availableCredit.toFixed(2)} credits
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  <Label htmlFor="add-credit">Add Credit</Label>
+                  <form onSubmit={handleAddCredit} className="grid gap-2">
+                    <Input
+                      id="add-credit"
+                      type="number"
+                      placeholder="Amount"
+                      value={creditToAdd}
+                      onChange={(e) => setCreditToAdd(e.target.value)}
+                      min="0"
+                      step="0.01"
+                    />
+                    <Button size="sm">
+                      <Plus className="size-4 mr-2" />
+                      Add
+                    </Button>
+                  </form>
+                </div>
+              </fieldset> */}
             </form>
           </div>
           <div className="relative flex h-full min-h-[50vh] flex-col rounded-xl bg-muted/50 p-4 lg:col-span-2">
@@ -297,7 +372,7 @@ export function Dashboard() {
                 </div>
               ))}
             </div>
-            
+
             <form
               onSubmit={handleSendMessage}
               className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring"
