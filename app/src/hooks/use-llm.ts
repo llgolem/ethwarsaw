@@ -27,6 +27,21 @@ export function useLLM(selectedModel: "llama" | "qwen2" | null) {
       qwen2: "qwen2:0.5b",
     };
 
+    const systemPrompt = `You are a crypto transaction parser. Your task is to interpret user messages about crypto transactions and return a structured JSON response. Follow these guidelines:
+
+1. Parse the input for transaction type, amount, token/currency, and recipient.
+2. Return a JSON object with the following structure:
+   {
+     "action": "send" | "swap",
+     "amount": number,
+     "from": string (token/currency name for 'send', or token to swap from for 'swap'),
+     "to": string (recipient address/ENS for 'send', or token to swap to for 'swap'),
+     "recipient": string (only for 'send' actions)
+   }
+3. If any information is missing or unclear, use null for that field.
+4. Do not include any explanations or additional text outside the JSON object.
+5. Ensure the JSON is valid and properly formatted.`;
+
     setIsLoading(true);
 
     try {
@@ -37,7 +52,10 @@ export function useLLM(selectedModel: "llama" | "qwen2" | null) {
         },
         body: JSON.stringify({
           model: modelMap[selectedModel],
-          messages: [{ role: "user", content: message }],
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: message }
+          ],
         } as ChatCompletionRequest),
       });
 

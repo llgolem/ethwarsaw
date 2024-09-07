@@ -32,9 +32,13 @@ import {
 import { useLLM } from "@/hooks/use-llm"
 
 export function Dashboard() {
-  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2" | null>(null)
+  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2" | null>(
+    null
+  )
   const { sendMessage, isLoading } = useLLM(selectedModel)
-  const [messages, setMessages] = useState<{ role: string; content: string }[]>([])
+  const [messages, setMessages] = useState<{ role: string; content: string }[]>(
+    []
+  )
   const [inputMessage, setInputMessage] = useState("")
   const [availableCredit, setAvailableCredit] = useState(100)
   const [creditToAdd, setCreditToAdd] = useState("")
@@ -62,7 +66,7 @@ export function Dashboard() {
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault()
       send()
     }
@@ -71,12 +75,15 @@ export function Dashboard() {
   const send = async () => {
     if (inputMessage.trim() && selectedModel) {
       const userMessage = { role: "user", content: inputMessage.trim() }
-      setMessages(prev => [...prev, userMessage])
+      setMessages((prev) => [...prev, userMessage])
       setInputMessage("")
-      
+
       try {
         const response = await sendMessage(userMessage.content)
-        setMessages(prev => [...prev, { role: "assistant", content: response.content }])
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: response.content },
+        ])
       } catch (error) {
         console.error("Error sending message:", error)
         // Optionally, you can show an error message to the user here
@@ -418,7 +425,12 @@ export function Dashboard() {
                 onKeyDown={handleKeyDown}
               />
               <div className="flex items-center p-3 pt-0">
-                <Button type="submit" size="sm" className="ml-auto gap-1.5" disabled={!selectedModel || !inputMessage}>
+                <Button
+                  type="submit"
+                  size="sm"
+                  className="ml-auto gap-1.5"
+                  disabled={!selectedModel || !inputMessage}
+                >
                   Send Message
                   <CornerDownLeft className="size-3.5" />
                 </Button>
