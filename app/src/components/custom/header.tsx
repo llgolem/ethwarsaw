@@ -62,16 +62,16 @@ export default function DashboardHeader({
     }
 
     try {
-      const requestId = await createRequest.mutateAsync({
+      const requestData = await createRequest.mutateAsync({
         payerAddress: address,
         receiverAddress: REQUEST_NETWORK_ADDRESS, // Replace with actual receiver address
-        amount: parseUnits(amount.toString(), 18).toString(), // Assuming 18 decimals
+        amount: '10000000000', // Assuming 18 decimals
         reason: "Add credits",
         signer: REQUEST_NETWORK_ADDRESS,
       })
 
       await payRequest.mutateAsync({
-        requestId,
+        requestData,
       })
 
       onAddCredit(amount)

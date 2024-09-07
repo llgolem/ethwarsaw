@@ -18,5 +18,6 @@ export const getRequestClient = (privateKey?: string) => {
       baseURL: "https://sepolia.gateway.request.network/",
     },
     signatureProvider,
+    skipPersistence: true,
   })
 }

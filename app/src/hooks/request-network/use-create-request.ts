@@ -27,8 +27,8 @@ const getCreateRequestParameters = ({
     requestInfo: {
       // The currency in which the request is denominated
       currency: {
-        type: Types.RequestLogic.CURRENCY.ERC20,
-        value: tokenAddress,
+        type: Types.RequestLogic.CURRENCY.ETH,
+        value: 'ETH',
         network: network,
       },
 
@@ -54,7 +54,7 @@ const getCreateRequestParameters = ({
 
     // The paymentNetwork is the method of payment and related details.
     paymentNetwork: {
-      id: Types.Extension.PAYMENT_NETWORK_ID.ERC20_FEE_PROXY_CONTRACT,
+      id: Types.Extension.PAYMENT_NETWORK_ID.ETH_FEE_PROXY_CONTRACT,
       parameters: {
         paymentNetworkName: network,
         paymentAddress: receiverAddress,
@@ -80,9 +80,9 @@ const getCreateRequestParameters = ({
 
 
 export const useCreateRequest = (
-  options?: Omit<UseMutationOptions<string, Error, CreateRequestParams>, 'mutationFn'>
+  options?: Omit<UseMutationOptions<any, Error, CreateRequestParams>, 'mutationFn'>
 ) => {
-  return useMutation<string, Error, CreateRequestParams>({
+  return useMutation<any, Error, CreateRequestParams>({
     mutationFn: async ({
       amount,
       receiverAddress,
@@ -104,9 +104,9 @@ export const useCreateRequest = (
         requestCreateParameters
       );
 
-      console.log(request.requestId);
+      console.log(request);
 
-      return request.requestId;
+      return request;
     },
     ...options
   });

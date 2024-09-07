@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
   ).then((res) => res.json());
 
   if (verifyRes.success) {
+    verifyRes.nullifier_hash
     // TODO: Implement backend actions if the verification succeeds
     // verify on all 4 chains
     // Such as, setting a user as "verified" in a database
