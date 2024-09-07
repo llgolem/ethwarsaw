@@ -41,6 +41,7 @@ export const useAddCredits = () => {
 
             return { chainId, success: true, hash };
           } catch (error) {
+            console.error("Error adding credits on chain", chainId, error);
             return { chainId, success: false, error: (error as Error).message };
           }
         })

@@ -16,9 +16,7 @@ export function Dashboard() {
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
   )
-  // const [availableCredit, setAvailableCredit] = useState(100)
   const { data: availableCredit } = useCheckCredits()
-  const ethExchangeRate = 100000
 
   const handleSendMessage = async (inputMessage: string) => {
     if (inputMessage.trim() && selectedModel) {
@@ -47,10 +45,7 @@ export function Dashboard() {
         </div>{" "}
       </aside>
       <div className="flex flex-col h-full overflow-hidden">
-        <DashboardHeader
-          availableCredit={availableCredit ?? 0}
-          ethExchangeRate={ethExchangeRate}
-        />
+        <DashboardHeader availableCredit={availableCredit ?? 0} />
         <main className="flex-1 overflow-hidden p-4 md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <ModelSelector
             selectedModel={selectedModel}

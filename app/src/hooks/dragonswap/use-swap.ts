@@ -3,7 +3,7 @@ import { writeContract } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
-import { ROUTER_ADDRESS, ROUTER_ABI } from "@/lib/constants"
+import { DRAGONSWAP_ROUTER_ADDRESS, DRAGONSWAP_ROUTER_ABI } from "@/lib/constants"
 
 type SwapParams = {
   amountIn: string
@@ -17,8 +17,8 @@ export function useSwap() {
   const swapExactTokensForTokens = useMutation({
     mutationFn: async ({ amountIn, amountOutMin, path, to, deadline }: SwapParams) => {
       const result = await writeContract(config, {
-        address: ROUTER_ADDRESS,
-        abi: ROUTER_ABI,
+        address: DRAGONSWAP_ROUTER_ADDRESS,
+        abi: DRAGONSWAP_ROUTER_ABI,
         functionName: "swapExactTokensForTokens",
         args: [
           parseUnits(amountIn, 18),

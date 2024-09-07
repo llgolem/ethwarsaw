@@ -37,13 +37,13 @@ import { useAddCredits } from "@/hooks/credit-manager/use-add-credits"
 
 interface DashboardHeaderProps {
   availableCredit: number
-  ethExchangeRate: number
 }
 
 export default function DashboardHeader({
   availableCredit,
-  ethExchangeRate,
 }: DashboardHeaderProps) {
+  const ethExchangeRate = 100000
+  
   const [creditToAdd, setCreditToAdd] = useState("")
   const { address } = useAccount()
   const { data: isVerified } = useIsVerifiedWithWorldcoin()

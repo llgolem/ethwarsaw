@@ -1,8 +1,9 @@
 export const REQUEST_NETWORK_ADDRESS =
   "0x80245CB7Dd7f6Ad18503dFbD2f269fb3B9322341"
 
-export const ROUTER_ADDRESS = "0x4c0b142FA93fF118474f69568953a2966f31a627"
-export const ROUTER_ABI = [
+export const DRAGONSWAP_ROUTER_ADDRESS = "0x527b42CA5e11370259EcaE68561C14dA415477C8"
+export const DRAGONSWAP_ROUTER_ABI = [
+  // swapExactTokensForTokens
   {
     inputs: [
       {
@@ -35,6 +36,78 @@ export const ROUTER_ABI = [
       },
     ],
     stateMutability: "payable",
+    type: "function",
+  },
+  // addLiquiditySEI
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountTokenDesired",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountTokenMin",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountSEIMin",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "deadline",
+        type: "uint256",
+      },
+    ],
+    name: "addLiquiditySEI",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "amountToken",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amountSEI",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "liquidity",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "payable",
+    type: "function",
+  },
+]
+
+export const ERC20_ABI = [
+  {
+    constant: true,
+    inputs: [{ name: "_owner", type: "address" }, { name: "_spender", type: "address" }],
+    name: "allowance",
+    outputs: [{ name: "", type: "uint256" }],
+    type: "function",
+  },
+  {
+    constant: false,
+    inputs: [{ name: "_spender", type: "address" }, { name: "_value", type: "uint256" }],
+    name: "approve",
+    outputs: [{ name: "", type: "bool" }],
     type: "function",
   },
 ]
