@@ -20,7 +20,7 @@ export const useVerifyWithWorldcoin = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ proof, userAddress }),
+        body: JSON.stringify({ proof }),
       })
 
       if (!response.ok) {

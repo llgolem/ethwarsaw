@@ -47,12 +47,6 @@ const config: HardhatUserConfig = {
       process.env.BASE_SEPOLIA_RPC_URL || "https://rpc.ankr.com/base_sepolia",
       accounts,
     },
-    optimism_sepolia: {
-      url:
-        process.env.OPTIMISM_SEPOLIA_RPC_URL ||
-        "https://rpc.ankr.com/optimism_sepolia",
-      accounts,
-    },
     celo_alfajores: {
       url:
         process.env.CELO_ALFAJORES_RPC_URL ||
