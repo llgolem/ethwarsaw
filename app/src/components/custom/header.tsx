@@ -15,7 +15,9 @@ import { useState } from "react"
 import { useCreateRequest } from "@/hooks/request-network/use-create-request"
 import { useAccount } from "wagmi"
 import { parseUnits } from "viem"
-import { REQUEST_NETWORK_ADDRESS, SEI_GOLEM_TOKEN_ADDRESS } from "@/lib/constants"
+import {
+  REQUEST_NETWORK_ADDRESS,
+} from "@/lib/constants"
 import { usePayRequest } from "@/hooks/request-network/use-pay-request"
 import {
   IDKitWidget,
@@ -34,7 +36,6 @@ import { env } from "@/env.mjs"
 import { useVerifyWithWorldcoin } from "@/hooks/worldcoin/use-verify-worldcoin"
 import { useIsVerifiedWithWorldcoin } from "@/hooks/worldcoin/use-is-verified-worldcoin"
 import { useAddCredits } from "@/hooks/credit-manager/use-add-credits"
-import { useAddLiquidity } from "@/hooks/dragonswap/use-add-liquidity"
 
 interface DashboardHeaderProps {
   availableCredit: number
