@@ -51,13 +51,10 @@ export default function DashboardHeader({
         reason: "Add credits",
         signer: REQUEST_NETWORK_ADDRESS,
       })
-      console.log("Request ID:", requestId)
 
-      const payment = await payRequest.mutateAsync({
+      await payRequest.mutateAsync({
         requestId,
       })
-
-      console.log("Payment:", payment)
 
       onAddCredit(amount)
       setCreditToAdd("")

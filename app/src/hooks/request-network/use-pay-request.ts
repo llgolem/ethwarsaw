@@ -56,6 +56,8 @@ export const usePayRequest = (options?: UsePayRequestOptions) => {
       }
 
       const tx = await payRequest(requestData);
+
+      console.log("Transaction: ", tx);
       await tx.wait();
     },
     onSuccess: options?.onSuccess,
