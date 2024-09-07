@@ -14,7 +14,7 @@ type SwapParams = {
 }
 
 export function useSwap() {
-  const swapExactTokensForTokens = useMutation({
+  return useMutation({
     mutationFn: async ({ amountIn, amountOutMin, path, to, deadline }: SwapParams) => {
       const result = await writeContract(config, {
         address: DRAGONSWAP_ROUTER_ADDRESS,
@@ -44,6 +44,4 @@ export function useSwap() {
       console.log("Swap result:", result)
     },
   })
-
-  return { swapExactTokensForTokens }
 }

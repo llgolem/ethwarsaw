@@ -19,7 +19,7 @@ type AddLiquidityParams = {
 }
 
 export function useAddLiquidity() {
-  const addLiquiditySEI = useMutation({
+  return useMutation({
     mutationFn: async ({
       token,
       amountTokenDesired,
@@ -83,8 +83,6 @@ export function useAddLiquidity() {
       console.log("Add liquidity result:", result)
     },
   })
-
-  return { addLiquiditySEI }
 }
 
 // const { addLiquiditySEI } = useAddLiquidity()

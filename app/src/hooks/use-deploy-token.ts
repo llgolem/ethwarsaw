@@ -18,7 +18,7 @@ export function useDeployToken() {
   const { address } = useAccount()
   const { data: walletClient } = useWalletClient()
 
-  const deployToken = useMutation({
+  return useMutation({
     mutationFn: async ({ name, symbol }: DeployTokenParams) => {
       if (!address) throw new Error("No wallet connected")
       if (!walletClient) throw new Error("Wallet client not available")
@@ -50,6 +50,4 @@ export function useDeployToken() {
       console.log("Deployed token address:", contractAddress)
     },
   })
-
-  return { deployToken }
 }
