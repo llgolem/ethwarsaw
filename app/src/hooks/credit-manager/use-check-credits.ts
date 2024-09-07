@@ -48,7 +48,7 @@ export function useCheckCredits(options?: UseCheckCreditsOptions) {
 
       return Number(mostCommonCredit)
     },
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: 5000, // Refetch every 5 seconds
     refetchIntervalInBackground: true,
     enabled: !!address,
     ...options,

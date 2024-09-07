@@ -3,6 +3,11 @@ import { Abi } from "viem"
 export const ABI: Abi = [
   {
     inputs: [],
+    name: "BonusAlreadyRedeemed",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "InsufficientCredits",
     type: "error",
   },
@@ -189,6 +194,44 @@ export const ABI: Abi = [
         internalType: "uint256",
         name: "",
         type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "hasRedeemedBonus",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "user",
+        type: "address",
+      },
+    ],
+    name: "hasUserRedeemedBonus",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
     stateMutability: "view",

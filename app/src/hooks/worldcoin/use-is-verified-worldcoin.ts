@@ -42,5 +42,8 @@ export const useIsVerifiedWithWorldcoin = () => {
 
       return results.some((result) => result.success && result.hasRedeemedBonus)
     },
+    refetchInterval: 5000, // Refetch every 5 seconds
+    refetchIntervalInBackground: true,
+    enabled: !!address,
   });
 };
