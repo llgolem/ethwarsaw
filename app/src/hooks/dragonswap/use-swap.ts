@@ -1,9 +1,9 @@
 import { toast } from "sonner"
-import { writeContract } from "wagmi/actions"
+import { writeContract, readContract } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
-import { DRAGONSWAP_ROUTER_ADDRESS, DRAGONSWAP_ROUTER_ABI } from "@/lib/constants"
+import { DRAGONSWAP_ROUTER_ADDRESS, DRAGONSWAP_ROUTER_ABI, ERC20_ABI } from "@/lib/constants"
 
 type SwapParams = {
   amountIn: string
@@ -16,12 +16,37 @@ type SwapParams = {
 export function useSwap() {
   return useMutation({
     mutationFn: async ({ amountIn, amountOutMin, path, to, deadline }: SwapParams) => {
+      const tokenToSwap = path[0]
+
+      // Check allowance
+      const allowance = (await readContract(config, {
+        address: tokenToSwap,
+        abi: ERC20_ABI,
+        functionName: "allowance",
+        args: [to, DRAGONSWAP_ROUTER_ADDRESS],
+      })) as bigint
+
+      const amountInBigInt = parseUnits(amountIn, 18)
+
+      // Approve if necessary
+      if (allowance < amountInBigInt) {
+        const approveResult = await writeContract(config, {
+          address: tokenToSwap,
+          abi: ERC20_ABI,
+          functionName: "approve",
+          args: [DRAGONSWAP_ROUTER_ADDRESS, amountInBigInt],
+        })
+
+        if (!approveResult) throw new Error("Failed to approve token")
+      }
+
+      // Execute swap
       const result = await writeContract(config, {
         address: DRAGONSWAP_ROUTER_ADDRESS,
         abi: DRAGONSWAP_ROUTER_ABI,
-        functionName: "swapExactTokensForTokens",
+        functionName: "swapExactTokensForSEI",
         args: [
-          parseUnits(amountIn, 18),
+          amountInBigInt,
           parseUnits(amountOutMin, 18),
           path,
           to,
