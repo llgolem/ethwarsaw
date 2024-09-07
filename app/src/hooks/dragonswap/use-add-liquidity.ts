@@ -3,27 +3,38 @@ import { writeContract, readContract } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
-import { DRAGONSWAP_ROUTER_ADDRESS, DRAGONSWAP_ROUTER_ABI, ERC20_ABI } from "@/lib/constants"
+import {
+  DRAGONSWAP_ROUTER_ADDRESS,
+  DRAGONSWAP_ROUTER_ABI,
+  ERC20_ABI,
+} from "@/lib/constants"
 
 type AddLiquidityParams = {
   token: Address
   amountTokenDesired: string
   amountTokenMin: string
+  amountSEIDesired: string
   amountSEIMin: string
   to: Address
-  deadline: bigint
 }
 
 export function useAddLiquidity() {
   const addLiquiditySEI = useMutation({
-    mutationFn: async ({ token, amountTokenDesired, amountTokenMin, amountSEIMin, to, deadline }: AddLiquidityParams) => {
+    mutationFn: async ({
+      token,
+      amountTokenDesired,
+      amountTokenMin,
+      amountSEIDesired,
+      amountSEIMin,
+      to,
+    }: AddLiquidityParams) => {
       // Check allowance
-      const allowance = await readContract(config, {
+      const allowance = (await readContract(config, {
         address: token,
         abi: ERC20_ABI,
         functionName: "allowance",
         args: [to, DRAGONSWAP_ROUTER_ADDRESS],
-      }) as bigint
+      })) as bigint
 
       const amountTokenDesiredBigInt = parseUnits(amountTokenDesired, 18)
 
@@ -39,6 +50,8 @@ export function useAddLiquidity() {
         if (!approveResult) throw new Error("Failed to approve token")
       }
 
+      const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 5) // 5 minutes from now
+
       // Add liquidity
       const result = await writeContract(config, {
         address: DRAGONSWAP_ROUTER_ADDRESS,
@@ -50,8 +63,9 @@ export function useAddLiquidity() {
           parseUnits(amountTokenMin, 18),
           parseUnits(amountSEIMin, 18),
           to,
-          deadline
+          deadline,
         ],
+        value: parseUnits(amountSEIDesired, 18), // Add the SEI value here
       })
 
       if (!result) throw new Error("Failed to add liquidity")
@@ -72,3 +86,31 @@ export function useAddLiquidity() {
 
   return { addLiquiditySEI }
 }
+
+// const { addLiquiditySEI } = useAddLiquidity()
+
+//   const testAddLiquidity = async (
+//   ) => {
+//     if (!address) {
+//       console.error('No address found')
+//       return
+//     }
+
+//     try {
+//       const tokenAmount = '100'
+//       const seiAmount = '0.1'
+
+//       await addLiquiditySEI.mutateAsync({
+//         token: SEI_GOLEM_TOKEN_ADDRESS,
+//         amountTokenDesired: tokenAmount,
+//         amountTokenMin: tokenAmount, // For simplicity, we're using the same amount for min
+//         amountSEIDesired: seiAmount,
+//         amountSEIMin: seiAmount, // For simplicity, we're using the same amount for min
+//         to: address,
+//       })
+
+//       console.log('Liquidity added successfully')
+//     } catch (error) {
+//       console.error('Error adding liquidity:', error)
+//     }
+//   }

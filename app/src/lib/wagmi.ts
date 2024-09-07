@@ -1,5 +1,5 @@
 import { createConfig, http } from "wagmi"
-import { sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia } from "wagmi/chains"
+import { sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia, seiTestnet } from "wagmi/chains"
 import { getDefaultConfig } from "connectkit"
 import { env } from "@/env.mjs"
 
@@ -12,8 +12,9 @@ export const chainMap = {
 
 export const config = createConfig(
   getDefaultConfig({
-    chains: [sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia],
+    chains: [sepolia, seiTestnet, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia],
     transports: {
+      [seiTestnet.id]: http(),
       [mantleSepoliaTestnet.id]: http(),
       [zircuitTestnet.id]: http(),
       [celoAlfajores.id]: http(),

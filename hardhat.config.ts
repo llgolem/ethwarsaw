@@ -67,6 +67,10 @@ const config: HardhatUserConfig = {
       url: process.env.ZIRCUIT_TESTNET_RPC_URL || "https://zircuit1.p2pify.com",
       accounts,
     },
+    sei_testnet: {
+      url: process.env.SEI_TESTNET_RPC_URL || "https://evm-rpc-testnet.sei-apis.com",
+      accounts,
+    },
   },
   gasReporter: {
     enabled: true,
