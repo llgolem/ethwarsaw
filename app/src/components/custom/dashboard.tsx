@@ -9,10 +9,9 @@ import { Button } from "../ui/button"
 import { useCheckCredits } from "@/hooks/credit-manager/use-check-credits"
 
 export function Dashboard() {
-  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2">(
-    "llama"
-  )
-  const { mutateAsync: sendMessage, isPending: isLoading } = useLLM(selectedModel)
+  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2">("llama")
+  const { mutateAsync: sendMessage, isPending: isLoading } =
+    useLLM(selectedModel)
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
   )
@@ -25,15 +24,24 @@ export function Dashboard() {
 
       try {
         const response = await sendMessage(userMessage.content)
+
+        const parsedInstructions = JSON.parse(response.content)
+
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: response.content },
+          {
+            role: "system",
+            content: JSON.stringify(parsedInstructions, null, 2),
+          },
         ])
       } catch (error) {
-        console.error("Error sending message:", error)
+        console.error("Error processing message:", error)
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "Error fetching response from LLM." },
+          {
+            role: "assistant",
+            content: "Error processing the transaction instructions.",
+          },
         ])
       }
     }

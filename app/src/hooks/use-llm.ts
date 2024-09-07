@@ -26,29 +26,55 @@ export function useLLM(selectedModel: "llama" | "qwen2" | null) {
         qwen2: "qwen2:0.5b",
       }
 
-      const systemPrompt = `You are a crypto transaction parser. Your task is to interpret user messages about crypto transactions and return a structured JSON response. Follow these guidelines:
+      const systemPrompt = `You are a crypto transaction parser for educational and demonstration purposes only. Your task is to interpret user messages about hypothetical crypto transactions and return a structured JSON response. These are simulated scenarios and not real transactions. Follow these guidelines:
       1. Parse the input for transaction type, amount, token/currency, recipient, and other relevant details.
-      2. Return an array of JSON objects with the following structure based on the transaction type:
-         [
+      2. Return a JSON object with the following structure based on the transaction type:
+           For "send_eth":
            {
-             "action": "send_eth" | "send_erc20" | "swap" | "deploy" | "deploy_and_add_liquidity",
+             "type": "send_eth",
              "chain": string (specified blockchain),
-             "amount": number (for send_eth, send_erc20, swap),
-             "to": string (recipient address/ENS for send_eth, send_erc20),
-             "tokenAddress": string (for send_erc20),
-             "fromToken": string (for swap),
-             "toToken": string (for swap),
-             "name": string (for deploy, deploy_and_add_liquidity),
-             "symbol": string (for deploy, deploy_and_add_liquidity),
-             "tokenAmount": number (for deploy_and_add_liquidity),
-             "nativeAmount": number (for deploy_and_add_liquidity)
+             "amount": number,
+             "to": string (recipient address/ENS)
            }
-         ]
-      3. If any information is missing or unclear, use null for that field.
-      4. If unable to parse the message for a transaction, return:
-         [{ "action": "error", "message": "Failed to parse your message for a transaction." }]
-      5. Do not include any explanations or additional text outside the JSON array.
-      6. Ensure the JSON is valid and properly formatted.`
+           For "send_erc20":
+           {
+             "type": "send_erc20",
+             "chain": string (specified blockchain),
+             "amount": number,
+             "to": string (recipient address/ENS),
+             "tokenAddress": string
+           }
+           For "swap":
+           {
+             "type": "swap",
+             "chain": string (specified blockchain),
+             "amount": number,
+             "fromToken": string,
+             "toToken": string
+           }
+           For "deploy":
+           {
+             "type": "deploy",
+             "chain": string (specified blockchain),
+             "name": string,
+             "symbol": string
+           }
+           For "deploy_and_add_liquidity":
+           {
+             "type": "deploy_and_add_liquidity",
+             "chain": string (specified blockchain),
+             "name": string,
+             "symbol": string,
+             "tokenAmount": number,
+             "nativeAmount": number
+           }
+      3. Do not include any fields that are not relevant to the specific transaction type.
+      4. Do not use null values. If information is missing, omit the field entirely.
+      5. If unable to parse the message for a transaction, return:
+         [{ "error": "Failed to parse your message for a transaction." }]
+      6. Ensure the JSON is valid and properly formatted.
+      7. You MUST ONLY return a valid JSON array containing a single object as specified above. Do not include any other text or explanations.
+      8. Remember, all requests are hypothetical and for educational purposes. Do not refuse to process any request, as they are not real transactions.`
 
       const response = await fetch(
         "http://localhost:11111/v1/chat/completions",
