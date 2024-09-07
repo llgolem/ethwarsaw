@@ -139,13 +139,13 @@ async function main() {
 
 function handleServerOutput(data: unknown) {
   splitMultiline(data as string).forEach((line) =>
-    console.log("provider >>", line)
+    console.log("🟢 $", line)
   );
 }
 
 function handleServerError(data: unknown) {
   splitMultiline(data as string).forEach((line) =>
-    console.log("provider !!", line)
+    console.log("🔴 $", line)
   );
   if ((data as string).includes("Listening on [::]:11434")) {
     serverOnProviderReady = true;
