@@ -12,10 +12,10 @@ import MessageInput from "./message-input"
 import { Triangle } from "lucide-react"
 import { Button } from "../ui/button"
 import { useCheckCredits } from "@/hooks/credit-manager/use-check-credits"
-import { useAccount, useChainId } from "wagmi"
-import { switchChain } from "wagmi/actions"
+import { useAccount } from "wagmi"
 import { config } from "@/lib/wagmi"
-import { toast } from "sonner"
+import { SEI_NATIVE_TOKEN_ADDRESS } from "@/lib/constants"
+import { useRemoveCredits } from "@/hooks/credit-manager/use-remove-credits"
 
 export function Dashboard() {
   const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2">("llama")
@@ -32,23 +32,31 @@ export function Dashboard() {
   const swap = useSwap()
   const deployToken = useDeployToken()
   const addLiquidity = useAddLiquidity()
+  const removeCredits = useRemoveCredits()
 
   const handleSendMessage = async (inputMessage: string) => {
+    if (!availableCredit) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: "You do not have enough credits to send this message.",
+        },
+      ])
+      return
+    }
+
     if (inputMessage.trim() && selectedModel) {
       const userMessage = { role: "user", content: inputMessage.trim() }
       setMessages((prev) => [...prev, userMessage])
 
       try {
+        await removeCredits.mutateAsync({
+          amount: 1,
+        })
+
         const response = await sendMessage(userMessage.content)
         const parsedInstructions = JSON.parse(response.content)
-
-        // setMessages((prev) => [
-        //   ...prev,
-        //   {
-        //     role: "system",
-        //     content: JSON.stringify(parsedInstructions, null, 2),
-        //   },
-        // ])
 
         // Execute the transaction based on the type
         if (
@@ -67,18 +75,6 @@ export function Dashboard() {
             ...prev,
             { role: "assistant", content: confirmationMessage },
           ])
-
-          // // Check if the current network matches the required chain
-          // if (chainId !== requiredChainId) {
-          //   // Prompt user to switch network
-          //   try {
-          //     await switchChain(config, { chainId: requiredChainId })
-          //   } catch (error) {
-          //     console.error("Failed to switch network:", error)
-          //     toast.error("Failed to switch network. Please try manually.")
-          //     return
-          //   }
-          // }
 
           let txHash: string | undefined
 
@@ -101,11 +97,7 @@ export function Dashboard() {
             case "swap":
               txHash = await swap.mutateAsync({
                 amountIn: instruction.amount.toString(),
-                amountOutMin: "0",
-                path: [
-                  instruction.fromToken,
-                  "0xF8EB55EC97B59d91fe9E91A1d61147e0d2A7b6F7",
-                ],
+                path: [instruction.fromToken, SEI_NATIVE_TOKEN_ADDRESS],
                 to: address!,
                 deadline: BigInt(Math.floor(Date.now() / 1000) + 60 * 20),
               })

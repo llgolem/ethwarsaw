@@ -3,11 +3,15 @@ import { writeContract, readContract } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
-import { DRAGONSWAP_ROUTER_ADDRESS, DRAGONSWAP_ROUTER_ABI, ERC20_ABI } from "@/lib/constants"
+import {
+  DRAGONSWAP_ROUTER_ADDRESS,
+  DRAGONSWAP_ROUTER_ABI,
+  ERC20_ABI,
+} from "@/lib/constants"
 
 type SwapParams = {
   amountIn: string
-  amountOutMin: string
+  amountOutMin?: string
   path: Address[]
   to: Address
   deadline: bigint
@@ -15,7 +19,13 @@ type SwapParams = {
 
 export function useSwap() {
   return useMutation({
-    mutationFn: async ({ amountIn, amountOutMin, path, to, deadline }: SwapParams) => {
+    mutationFn: async ({
+      amountIn,
+      amountOutMin = "0",
+      path,
+      to,
+      deadline,
+    }: SwapParams) => {
       const tokenToSwap = path[0]
 
       // Check allowance
@@ -50,7 +60,7 @@ export function useSwap() {
           parseUnits(amountOutMin, 18),
           path,
           to,
-          deadline
+          deadline,
         ],
       })
 
