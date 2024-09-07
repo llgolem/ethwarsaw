@@ -9,10 +9,10 @@ import { Button } from "../ui/button"
 import { useCheckCredits } from "@/hooks/credit-manager/use-check-credits"
 
 export function Dashboard() {
-  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2" | null>(
-    null
+  const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2">(
+    "llama"
   )
-  const { sendMessage, isLoading } = useLLM(selectedModel)
+  const { mutateAsync: sendMessage, isPending: isLoading } = useLLM(selectedModel)
   const [messages, setMessages] = useState<{ role: string; content: string }[]>(
     []
   )
@@ -31,6 +31,10 @@ export function Dashboard() {
         ])
       } catch (error) {
         console.error("Error sending message:", error)
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "Error fetching response from LLM." },
+        ])
       }
     }
   }

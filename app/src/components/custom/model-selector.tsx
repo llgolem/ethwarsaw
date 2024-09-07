@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/select"
 
 interface ModelSelectorProps {
-  selectedModel: "llama" | "qwen2" | null
+  selectedModel: "llama" | "qwen2"
   onSelectModel: (model: "llama" | "qwen2") => void
 }
 
@@ -31,7 +31,7 @@ export default function ModelSelector({ selectedModel, onSelectModel }: ModelSel
           <legend className="-ml-1 px-1 text-sm font-medium">Settings</legend>
           <div className="grid gap-3">
             <Label htmlFor="model">Model</Label>
-            <Select onValueChange={onSelectModel}>
+            <Select onValueChange={onSelectModel} defaultValue="llama">
               <SelectTrigger
                 id="model"
                 className="items-start [&_[data-description]]:hidden"
