@@ -3,7 +3,7 @@ import { save } from "./utils/save"
 import { verify } from "./utils/verify"
 
 task("deploy", "📰 Deploys a contract, saves the artifact and verifies it.")
-  .addParam("contract", "Name of the contract to deploy.", "Counter")
+  .addParam("contract", "Name of the contract to deploy.", "CreditManager")
   .addOptionalVariadicPositionalParam(
     "args",
     "Constructor arguments for the contract"
