@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@redstone-finance/evm-connector/contracts/data-services/MainDemoConsumerBase.sol";
 
 /// @title Credit Manager
 /// @notice Manages user credits with ETH-based pricing and bonus credits
-/// @dev Inherits from Ownable and MainDemoConsumerBase for price oracle functionality
-contract CreditManager is Ownable(msg.sender), MainDemoConsumerBase {
+/// @dev Inherits from Ownable for price oracle functionality
+contract CreditManager is Ownable(msg.sender) {
     /// @notice Mapping of user addresses to their credit balances
     mapping(address => uint256) public credits;
 
@@ -30,35 +29,29 @@ contract CreditManager is Ownable(msg.sender), MainDemoConsumerBase {
     /// @param nullifier The nullifier used for the bonus credit
     event BonusCreditAdded(address indexed user, uint256 amount, bytes32 nullifier);
 
-    /// @dev Constants for credit calculations and bonus amounts
-    uint256 private constant CREDITS_PER_5_USD = 100;
-    uint256 private constant USD_DENOMINATOR = 5e18;
+    /// @notice The amount of bonus credits to add for first-time users
     uint256 private constant BONUS_CREDIT_AMOUNT = 100;
 
     /// @dev Custom errors for better gas efficiency and clarity
-    error InvalidEthAmount();
-    error InvalidEthPrice();
+    error InvalidCreditAmount();
     error InsufficientCredits();
     error NullifierAlreadyUsed();
 
-    /// @notice Adds credits to a user's balance based on ETH amount
+    /// @notice Adds credits to a user's balance
     /// @param user The address of the user to receive credits
-    /// @param ethAmount The amount of ETH to convert to credits
-    function addCredit(address user, uint256 ethAmount) external onlyOwner {
-        if (ethAmount == 0) revert InvalidEthAmount();
+    /// @param amount The amount of credits to add
+    function addCredit(address user, uint256 amount) external onlyOwner {
+        if (amount == 0) revert InvalidCreditAmount();
         
-        uint256 creditsToAdd = calculateCredits(ethAmount);
-        if (creditsToAdd == 0) revert InvalidEthAmount();
-        
-        credits[user] += creditsToAdd;
-        emit CreditAdded(user, creditsToAdd);
+        credits[user] += amount;
+        emit CreditAdded(user, amount);
     }
 
     /// @notice Removes credits from a user's balance
     /// @param user The address of the user to remove credits from
     /// @param amount The amount of credits to remove
     function removeCredits(address user, uint256 amount) external onlyOwner {
-        if (amount == 0) revert InvalidEthAmount();
+        if (amount == 0) revert InvalidCreditAmount();
         if (credits[user] < amount) revert InsufficientCredits();
         
         credits[user] -= amount;
@@ -70,17 +63,6 @@ contract CreditManager is Ownable(msg.sender), MainDemoConsumerBase {
     /// @return The credit balance of the user
     function getCredit(address user) external view returns (uint256) {
         return credits[user];
-    }
-
-    /// @notice Calculates the number of credits based on ETH amount
-    /// @param ethAmount The amount of ETH to convert to credits
-    /// @return The calculated number of credits
-    function calculateCredits(uint256 ethAmount) public view returns (uint256) {
-        uint256 ethPrice = getOracleNumericValueFromTxMsg(bytes32("ETH"));
-        if (ethPrice == 0) revert InvalidEthPrice();
-
-        uint256 usdValue = (ethAmount * ethPrice) / 1e18; // Convert to USD value
-        return (usdValue * CREDITS_PER_5_USD) / USD_DENOMINATOR;
     }
 
     /// @notice Adds bonus credits to a user's balance using a Worldcoin nullifier

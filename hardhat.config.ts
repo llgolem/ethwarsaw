@@ -42,29 +42,29 @@ const config: HardhatUserConfig = {
       url: process.env.SEPOLIA_RPC_URL || "https://rpc.ankr.com/eth_sepolia",
       accounts,
     },
+    base_sepolia: {
+      url:
+      process.env.BASE_SEPOLIA_RPC_URL || "https://rpc.ankr.com/base_sepolia",
+      accounts,
+    },
     optimism_sepolia: {
       url:
         process.env.OPTIMISM_SEPOLIA_RPC_URL ||
         "https://rpc.ankr.com/optimism_sepolia",
       accounts,
     },
-    base_sepolia: {
+    celo_alfajores: {
       url:
-        process.env.BASE_SEPOLIA_RPC_URL || "https://rpc.ankr.com/base_sepolia",
+        process.env.CELO_ALFAJORES_RPC_URL ||
+        "https://alfajores-forno.celo-testnet.org",
       accounts,
     },
-    arbitrum_sepolia: {
-      url:
-        process.env.ARBITRUM_SEPOLIA_RPC_URL ||
-        "https://rpc.ankr.com/arbitrum_sepolia",
+    mantle_sepolia: {
+      url: process.env.MANTLE_SEPOLIA_RPC_URL || "https://rpc.sepolia.mantle.xyz",
       accounts,
     },
-    mumbai: {
-      url: process.env.MUMBAI_RPC_URL || "https://rpc.ankr.com/polygon_mumbai",
-      accounts,
-    },
-    fuji: {
-      url: process.env.FUJI_RPC_URL || "https://rpc.ankr.com/avalanche_fuji",
+    zircuit_testnet: {
+      url: process.env.ZIRCUIT_TESTNET_RPC_URL || "https://zircuit1.p2pify.com",
       accounts,
     },
   },
