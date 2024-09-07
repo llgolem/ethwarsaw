@@ -11,7 +11,7 @@ task("deploy", "📰 Deploys a contract, saves the artifact and verifies it.")
   .addFlag("save", "Flag to indicate whether to save the contract or not")
   .addFlag("verify", "Flag to indicate whether to verify the contract or not")
   .setAction(async (args, { viem, network, run }) => {
-    await run("compile")
+    // await run("compile")
 
     const constructorArgs = args.args || []
 
