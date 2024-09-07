@@ -1,23 +1,10 @@
 import { CONTRACTS } from "@/lib/contracts"
-import { config } from "@/lib/wagmi"
+import { chainMap, config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { ISuccessResult } from "@worldcoin/idkit"
 import { privateKeyToAccount } from "viem/accounts"
 import { writeContract } from "@wagmi/core"
-import {
-  celoAlfajores,
-  mantleSepoliaTestnet,
-  optimismSepolia,
-  zircuitTestnet,
-} from "viem/chains"
 import { env } from "@/env.mjs"
-
-const chainMap = {
-  [celoAlfajores.id]: celoAlfajores,
-  [mantleSepoliaTestnet.id]: mantleSepoliaTestnet,
-  [optimismSepolia.id]: optimismSepolia,
-  [zircuitTestnet.id]: zircuitTestnet,
-}
 
 export const useVerifyWithWorldcoin = () => {
   return useMutation({

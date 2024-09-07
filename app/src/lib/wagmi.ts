@@ -3,6 +3,13 @@ import { sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismS
 import { getDefaultConfig } from "connectkit"
 import { env } from "@/env.mjs"
 
+export const chainMap = {
+  [celoAlfajores.id]: celoAlfajores,
+  [mantleSepoliaTestnet.id]: mantleSepoliaTestnet,
+  [optimismSepolia.id]: optimismSepolia,
+  [zircuitTestnet.id]: zircuitTestnet,
+}
+
 export const config = createConfig(
   getDefaultConfig({
     chains: [sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia],

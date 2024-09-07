@@ -32,40 +32,38 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { env } from "@/env.mjs"
 import { useVerifyWithWorldcoin } from "@/hooks/worldcoin/use-verify-worldcoin"
+import { useIsVerifiedWithWorldcoin } from "@/hooks/worldcoin/use-is-verified-worldcoin"
+import { useAddCredits } from "@/hooks/credit-manager/use-add-credits"
 
 interface DashboardHeaderProps {
   availableCredit: number
   ethExchangeRate: number
-  onAddCredit: (amount: number) => void
 }
 
 export default function DashboardHeader({
   availableCredit,
   ethExchangeRate,
-  onAddCredit,
 }: DashboardHeaderProps) {
   const [creditToAdd, setCreditToAdd] = useState("")
-  const [isVerified, setIsVerified] = useState(false)
   const { address } = useAccount()
+  const { data: isVerified } = useIsVerifiedWithWorldcoin()
   const createRequest = useCreateRequest()
   const payRequest = usePayRequest()
-
   const verifyWithWorldcoin = useVerifyWithWorldcoin()
+  const addCredits = useAddCredits()
 
   const handleAddCredit = async (e: React.FormEvent) => {
     e.preventDefault()
-    const amount = parseFloat(creditToAdd)
+    const creditAmount = parseFloat(creditToAdd)
+    const ethAmount = creditAmount / ethExchangeRate
 
-    if (!address) {
-      console.error("No wallet connected")
-      return
-    }
+    if (!address) return console.error("No wallet connected")
 
     try {
       const requestData = await createRequest.mutateAsync({
         payerAddress: address,
-        receiverAddress: REQUEST_NETWORK_ADDRESS, // Replace with actual receiver address
-        amount: "10000000000", // Assuming 18 decimals
+        receiverAddress: REQUEST_NETWORK_ADDRESS,
+        amount: parseUnits(ethAmount.toFixed(18), 18).toString(),
         reason: "Add credits",
         signer: REQUEST_NETWORK_ADDRESS,
       })
@@ -74,17 +72,14 @@ export default function DashboardHeader({
         requestData,
       })
 
-      onAddCredit(amount)
+      await addCredits.mutateAsync({
+        amount: creditAmount,
+      })
+
       setCreditToAdd("")
     } catch (error) {
       console.error("Error creating request:", error)
     }
-  }
-
-  const onSuccess = (proof: ISuccessResult) => {
-    console.log("Worldcoin verification successful", proof)
-    setIsVerified(true)
-    onAddCredit(100) // Add 100 free credits
   }
 
   const handleVerifyClick = (e: React.MouseEvent) => {
@@ -93,20 +88,12 @@ export default function DashboardHeader({
   }
 
   const handleVerify = async (result: ISuccessResult) => {
-    // Here you would typically send the proof to your backend for verification
-    console.log("Verification result:", result)
-
     try {
-      // Example: Send proof to backend
       const verifyRes = await verifyWithWorldcoin.mutateAsync({
         proof: result,
         userAddress: address!,
       })
       console.log("Verification response:", verifyRes)
-
-      // For now, we'll just set it as verified
-      setIsVerified(true)
-      onAddCredit(100) // Add 100 free credits
     } catch (error) {
       console.error("Error verifying Worldcoin proof:", error)
     }
@@ -247,8 +234,8 @@ export default function DashboardHeader({
         <IDKitWidget
           app_id={env.NEXT_PUBLIC_WORLDCOIN_APP_ID as `app_${string}`}
           action={env.NEXT_PUBLIC_WORLDCOIN_ACTION}
-          onSuccess={onSuccess} // callback when the modal is closed
-          handleVerify={handleVerify} // optional callback when the proof is received
+          onSuccess={() => {}}
+          handleVerify={handleVerify}
           verification_level={VerificationLevel.Orb}
         >
           {({ open }) => (

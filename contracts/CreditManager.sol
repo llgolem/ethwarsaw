@@ -13,6 +13,9 @@ contract CreditManager is Ownable(msg.sender) {
     /// @notice Mapping to track used nullifiers for bonus credits
     mapping(bytes32 => bool) public usedNullifiers;
 
+    /// @notice Mapping to track if a user has redeemed their bonus credit
+    mapping(address => bool) public hasRedeemedBonus;
+
     /// @notice Emitted when credits are added to a user's balance
     /// @param user The address of the user receiving credits
     /// @param amount The amount of credits added
@@ -36,6 +39,7 @@ contract CreditManager is Ownable(msg.sender) {
     error InvalidCreditAmount();
     error InsufficientCredits();
     error NullifierAlreadyUsed();
+    error BonusAlreadyRedeemed();
 
     /// @notice Adds credits to a user's balance
     /// @param user The address of the user to receive credits
@@ -70,10 +74,19 @@ contract CreditManager is Ownable(msg.sender) {
     /// @param nullifier The Worldcoin nullifier to verify first-time use
     function addBonusCredit(address user, bytes32 nullifier) external {
         if (usedNullifiers[nullifier]) revert NullifierAlreadyUsed();
+        if (hasRedeemedBonus[user]) revert BonusAlreadyRedeemed();
         
         usedNullifiers[nullifier] = true;
+        hasRedeemedBonus[user] = true;
         credits[user] += BONUS_CREDIT_AMOUNT;
         
         emit BonusCreditAdded(user, BONUS_CREDIT_AMOUNT, nullifier);
+    }
+
+    /// @notice Checks if a user has redeemed their bonus credit
+    /// @param user The address of the user to check
+    /// @return A boolean indicating whether the user has redeemed their bonus credit
+    function hasUserRedeemedBonus(address user) external view returns (bool) {
+        return hasRedeemedBonus[user];
     }
 }
