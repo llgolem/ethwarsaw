@@ -103,7 +103,7 @@ export default function DashboardHeader({
 
   return (
     <header className="flex h-[57px] items-center justify-between border-b bg-background px-4">
-      <h1 className="text-xl font-semibold">Playground</h1>
+      <h1 className="text-xl font-semibold">_Wallm</h1>
       <div className="flex items-center gap-2">
         <div className="hidden sm:flex items-center gap-2">
           <Dialog>

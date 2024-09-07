@@ -16,8 +16,12 @@ import { useAccount } from "wagmi"
 import { config } from "@/lib/wagmi"
 import { SEI_NATIVE_TOKEN_ADDRESS } from "@/lib/constants"
 import { useRemoveCredits } from "@/hooks/credit-manager/use-remove-credits"
+import Logo from "../icons/logo"
+import { useTheme } from "next-themes"
 
 export function Dashboard() {
+  const { theme, setTheme } = useTheme()
+
   const [selectedModel, setSelectedModel] = useState<"llama" | "qwen2">("llama")
   const { mutateAsync: sendMessage, isPending: isLoading } =
     useLLM(selectedModel)
@@ -242,8 +246,13 @@ export function Dashboard() {
     <div className="h-screen w-full pl-[56px] flex flex-col">
       <aside className="fixed inset-y-0 left-0 z-20 flex h-full flex-col border-r">
         <div className="border-b p-2">
-          <Button variant="outline" size="icon" aria-label="Home">
-            <Triangle className="size-5 fill-foreground" />
+          <Button
+            variant="outline"
+            size="icon"
+            aria-label="Home"
+            onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          >
+            <Logo className="size-5 fill-foreground" />
           </Button>
         </div>{" "}
       </aside>
