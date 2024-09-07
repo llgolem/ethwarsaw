@@ -17,7 +17,11 @@ import { useAccount } from "wagmi"
 import { parseUnits } from "viem"
 import { REQUEST_NETWORK_ADDRESS } from "@/lib/constants"
 import { usePayRequest } from "@/hooks/request-network/use-pay-request"
-import { IDKitWidget, ISuccessResult } from '@worldcoin/idkit'
+import {
+  IDKitWidget,
+  ISuccessResult,
+  VerificationLevel,
+} from "@worldcoin/idkit"
 import { Menu } from "lucide-react"
 import {
   DropdownMenu,
@@ -26,6 +30,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
+import { env } from "@/env.mjs"
+import { useVerifyWithWorldcoin } from "@/hooks/worldcoin/use-verify-worldcoin"
 
 interface DashboardHeaderProps {
   availableCredit: number
@@ -44,10 +50,12 @@ export default function DashboardHeader({
   const createRequest = useCreateRequest()
   const payRequest = usePayRequest()
 
+  const verifyWithWorldcoin = useVerifyWithWorldcoin()
+
   const handleAddCredit = async (e: React.FormEvent) => {
     e.preventDefault()
     const amount = parseFloat(creditToAdd)
-    
+
     if (!address) {
       console.error("No wallet connected")
       return
@@ -81,8 +89,25 @@ export default function DashboardHeader({
 
   const handleVerifyClick = (e: React.MouseEvent) => {
     e.stopPropagation() // Prevent the main button click event
-    document.getElementById('worldcoin-verify')?.click()
+    document.getElementById("worldcoin-verify")?.click()
   }
+
+  const handleVerify = async (result: ISuccessResult) => {
+    // Here you would typically send the proof to your backend for verification
+    console.log("Verification result:", result);
+    
+    try {
+      // Example: Send proof to backend
+      const verifyRes = await verifyWithWorldcoin.mutateAsync(result);
+      console.log("Verification response:", verifyRes);
+
+      // For now, we'll just set it as verified
+      setIsVerified(true);
+      onAddCredit(100); // Add 100 free credits
+    } catch (error) {
+      console.error("Error verifying Worldcoin proof:", error);
+    }
+  };
 
   return (
     <header className="flex h-[57px] items-center justify-between border-b bg-background px-4">
@@ -151,11 +176,19 @@ export default function DashboardHeader({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onSelect={() => document.getElementById('add-credits-dialog')?.click()}>
+            <DropdownMenuItem
+              onSelect={() =>
+                document.getElementById("add-credits-dialog")?.click()
+              }
+            >
               Credits: {availableCredit.toFixed(2)}
             </DropdownMenuItem>
             {!isVerified && (
-              <DropdownMenuItem onSelect={() => document.getElementById('worldcoin-verify')?.click()}>
+              <DropdownMenuItem
+                onSelect={() =>
+                  document.getElementById("worldcoin-verify")?.click()
+                }
+              >
                 Get 100 Free Credits
               </DropdownMenuItem>
             )}
@@ -209,12 +242,15 @@ export default function DashboardHeader({
 
       {!isVerified && (
         <IDKitWidget
-          app_id="app_GBkZ1KlVUdFTjeMXKlVUdFT"
-          action="claim_nft"
-          signal={address}
-          onSuccess={onSuccess}
+          app_id={env.NEXT_PUBLIC_WORLDCOIN_APP_ID as `app_${string}`}
+          action={env.NEXT_PUBLIC_WORLDCOIN_ACTION} 
+          onSuccess={onSuccess} // callback when the modal is closed
+          handleVerify={handleVerify} // optional callback when the proof is received
+          verification_level={VerificationLevel.Orb}
         >
-          {({ open }) => <button id="worldcoin-verify" className="hidden" onClick={open} />}
+          {({ open }) => (
+            <button id="worldcoin-verify" className="hidden" onClick={open} />
+          )}
         </IDKitWidget>
       )}
     </header>
