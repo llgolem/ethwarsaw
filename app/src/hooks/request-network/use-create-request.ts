@@ -1,8 +1,8 @@
 import { Types, Utils } from "@requestnetwork/request-client.js";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import { useAccount } from "wagmi";
-
 import { getRequestClient } from "./client";
+import { env } from "@/env.mjs";
 
 const network = "sepolia";
 const tokenAddress = "0x370DE27fdb7D1Ff1e1BaA7D11c5820a324Cf623C"; // FAU on sepolia
@@ -82,8 +82,6 @@ const getCreateRequestParameters = ({
 export const useCreateRequest = (
   options?: Omit<UseMutationOptions<string, Error, CreateRequestParams>, 'mutationFn'>
 ) => {
-  const { address } = useAccount();
-
   return useMutation<string, Error, CreateRequestParams>({
     mutationFn: async ({
       amount,
@@ -92,8 +90,6 @@ export const useCreateRequest = (
       reason,
       signer,
     }) => {
-      if (!address) throw new Error("No address");
-
       const requestCreateParameters = getCreateRequestParameters({
         payerAddress,
         receiverAddress,
@@ -102,7 +98,8 @@ export const useCreateRequest = (
         signer,
       });
 
-      const requestClient = getRequestClient();
+      const requestClient = getRequestClient(env.NEXT_PUBLIC_REQUEST_NETWORK_SIGNER);
+
       const request = await requestClient.createRequest(
         requestCreateParameters
       );

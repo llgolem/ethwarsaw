@@ -12,6 +12,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ConnectKitButton } from "connectkit"
 import { useState } from "react"
+import { useCreateRequest } from "@/hooks/request-network/use-create-request"
+import { useAccount } from "wagmi"
+import { parseUnits } from "viem"
+import { REQUEST_NETWORK_ADDRESS } from "@/lib/constants"
+import { usePayRequest } from "@/hooks/request-network/use-pay-request"
 
 interface DashboardHeaderProps {
   availableCredit: number
@@ -25,12 +30,40 @@ export default function DashboardHeader({
   onAddCredit,
 }: DashboardHeaderProps) {
   const [creditToAdd, setCreditToAdd] = useState("")
+  const { address } = useAccount()
+  const createRequest = useCreateRequest()
+  const payRequest = usePayRequest()
 
-  const handleAddCredit = (e: React.FormEvent) => {
+  const handleAddCredit = async (e: React.FormEvent) => {
     e.preventDefault()
     const amount = parseFloat(creditToAdd)
-    onAddCredit(amount)
-    setCreditToAdd("")
+    
+    if (!address) {
+      console.error("No wallet connected")
+      return
+    }
+
+    try {
+      const requestId = await createRequest.mutateAsync({
+        payerAddress: address,
+        receiverAddress: REQUEST_NETWORK_ADDRESS, // Replace with actual receiver address
+        amount: parseUnits(amount.toString(), 18).toString(), // Assuming 18 decimals
+        reason: "Add credits",
+        signer: REQUEST_NETWORK_ADDRESS,
+      })
+      console.log("Request ID:", requestId)
+
+      const payment = await payRequest.mutateAsync({
+        requestId,
+      })
+
+      console.log("Payment:", payment)
+
+      onAddCredit(amount)
+      setCreditToAdd("")
+    } catch (error) {
+      console.error("Error creating request:", error)
+    }
   }
 
   return (
