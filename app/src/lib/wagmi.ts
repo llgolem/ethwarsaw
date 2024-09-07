@@ -1,13 +1,16 @@
 import { createConfig, http } from "wagmi"
-import { sepolia } from "wagmi/chains"
+import { sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia } from "wagmi/chains"
 import { getDefaultConfig } from "connectkit"
 import { env } from "@/env.mjs"
 
 export const config = createConfig(
   getDefaultConfig({
-    chains: [sepolia],
+    chains: [sepolia, mantleSepoliaTestnet, zircuitTestnet, celoAlfajores, optimismSepolia],
     transports: {
-      [sepolia.id]: http(),
+      [mantleSepoliaTestnet.id]: http(),
+      [zircuitTestnet.id]: http(),
+      [celoAlfajores.id]: http(),
+      [optimismSepolia.id]: http(),
     },
 
     // Required API Keys

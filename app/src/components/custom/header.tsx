@@ -65,7 +65,7 @@ export default function DashboardHeader({
       const requestData = await createRequest.mutateAsync({
         payerAddress: address,
         receiverAddress: REQUEST_NETWORK_ADDRESS, // Replace with actual receiver address
-        amount: '10000000000', // Assuming 18 decimals
+        amount: "10000000000", // Assuming 18 decimals
         reason: "Add credits",
         signer: REQUEST_NETWORK_ADDRESS,
       })
@@ -94,20 +94,23 @@ export default function DashboardHeader({
 
   const handleVerify = async (result: ISuccessResult) => {
     // Here you would typically send the proof to your backend for verification
-    console.log("Verification result:", result);
-    
+    console.log("Verification result:", result)
+
     try {
       // Example: Send proof to backend
-      const verifyRes = await verifyWithWorldcoin.mutateAsync(result);
-      console.log("Verification response:", verifyRes);
+      const verifyRes = await verifyWithWorldcoin.mutateAsync({
+        proof: result,
+        userAddress: address!,
+      })
+      console.log("Verification response:", verifyRes)
 
       // For now, we'll just set it as verified
-      setIsVerified(true);
-      onAddCredit(100); // Add 100 free credits
+      setIsVerified(true)
+      onAddCredit(100) // Add 100 free credits
     } catch (error) {
-      console.error("Error verifying Worldcoin proof:", error);
+      console.error("Error verifying Worldcoin proof:", error)
     }
-  };
+  }
 
   return (
     <header className="flex h-[57px] items-center justify-between border-b bg-background px-4">
@@ -243,7 +246,7 @@ export default function DashboardHeader({
       {!isVerified && (
         <IDKitWidget
           app_id={env.NEXT_PUBLIC_WORLDCOIN_APP_ID as `app_${string}`}
-          action={env.NEXT_PUBLIC_WORLDCOIN_ACTION} 
+          action={env.NEXT_PUBLIC_WORLDCOIN_ACTION}
           onSuccess={onSuccess} // callback when the modal is closed
           handleVerify={handleVerify} // optional callback when the proof is received
           verification_level={VerificationLevel.Orb}

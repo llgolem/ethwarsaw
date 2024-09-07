@@ -1,8 +1,13 @@
 import { env } from "@/env.mjs";
 import { NextRequest, NextResponse } from "next/server";
+import { CONTRACTS } from "@/lib/contracts";
+import { privateKeyToAccount } from "viem/accounts";
+import { celoAlfajores, mantleSepoliaTestnet, optimismSepolia, zircuitTestnet } from "wagmi/chains";
+import { writeContract } from '@wagmi/core';
+import { config } from "@/lib/wagmi";
 
 export async function POST(req: NextRequest) {
-  const proof = await req.json();
+  const { proof, userAddress } = await req.json();
   const app_id = env.NEXT_PUBLIC_WORLDCOIN_APP_ID;
   const action = env.NEXT_PUBLIC_WORLDCOIN_ACTION;
 
@@ -18,14 +23,34 @@ export async function POST(req: NextRequest) {
   ).then((res) => res.json());
 
   if (verifyRes.success) {
-    verifyRes.nullifier_hash
-    // TODO: Implement backend actions if the verification succeeds
-    // verify on all 4 chains
-    // Such as, setting a user as "verified" in a database
-    return NextResponse.json(verifyRes, { status: 200 });
+    // const nullifierHash = verifyRes.nullifier_hash;
+    // const privateKey = env.NEXT_PUBLIC_REQUEST_NETWORK_SIGNER as `0x${string}`;
+    // const account = privateKeyToAccount(privateKey);
+
+    // const results = await Promise.all(
+    //   Object.entries(CONTRACTS).map(async ([chainId, contract]) => {
+    //     const chain = [celoAlfajores, mantleSepoliaTestnet, optimismSepolia, zircuitTestnet].find(
+    //       (c) => c.id === Number(chainId)
+    //     );
+    //     try {
+    //       const hash = await writeContract(config,{
+    //         address: contract.address,
+    //         abi: contract.abi,
+    //         functionName: 'addBonusCredit',
+    //         args: [userAddress, nullifierHash],
+    //         account,
+    //         chain,
+    //       });
+    //       return { chainId, success: true, hash };
+    //     } catch (error) {
+    //       console.error(`Error calling addBonusCredit on chain ${chainId}:`, error);
+    //       return { chainId, success: false, error: (error as Error).message };
+    //     }
+    //   })
+    // );
+
+    return NextResponse.json({ success: true, verifyRes }, { status: 200 });
   } else {
-    // This is where you should handle errors from the World ID /verify endpoint.
-    // Usually these errors are due to a user having already verified.
     return NextResponse.json(verifyRes, { status: 400 });
   }
 }
