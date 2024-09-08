@@ -1,6 +1,6 @@
 # Golem Network Ollama Integration
 
-This project integrates with the Golem Network to run an Ollama server.
+This project integrates with the Golem Network to run an Ollama instance.
 
 ## Prerequisites
 
@@ -23,39 +23,6 @@ This project integrates with the Golem Network to run an Ollama server.
 3. **Set up environment variables:**
    - Create a `.env` file in the project root.
    - Add your Yagna API key:
-     ```
-     API_KEY=your_generated_api_key_here
-     ```
-
-## Installation
-
-Certainly! I'll create documentation for the `src/index.ts` file, including the prerequisites you mentioned. Here's the documentation:
-
-# Golem Network Integration Documentation
-
-This documentation covers the usage of the `src/index.ts` file, which integrates with the Golem Network to run an Ollama server.
-
-## Prerequisites
-
-1. Install and set up Yagna:
-
-   - Install Yagna following the official Golem documentation.
-   - Run the Yagna service:
-     ```
-     yagna service run
-     ```
-
-2. Generate Yagna API key:
-
-   - Run the following command to generate an API key:
-     ```
-     yagna app-key create requestor
-     ```
-   - Copy the generated API key.
-
-3. Set up environment variables:
-   - Create a `.env` file in the project root.
-   - Add your Yagna API key to the `.env` file:
      ```
      API_KEY=your_generated_api_key_here
      ```
