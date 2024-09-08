@@ -3,7 +3,7 @@ import { writeContract } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { Address, parseUnits } from "viem"
 import { toast } from "sonner"
-import { ERC20_ABI } from "@/lib/constants"
+import { ERC20_ABI } from "@/lib/abi"
 
 type SendERC20Params = {
   tokenAddress: Address

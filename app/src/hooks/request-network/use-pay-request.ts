@@ -4,7 +4,6 @@ import {
 import { useMutation } from "@tanstack/react-query"
 import { useAccount } from "wagmi"
 
-import { getRequestClient } from "./client"
 import { RequestNetwork } from "@requestnetwork/request-client.js"
 
 interface UsePayRequestOptions {

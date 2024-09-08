@@ -9,9 +9,8 @@ import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
 import {
   DRAGONSWAP_ROUTER_ADDRESS,
-  DRAGONSWAP_ROUTER_ABI,
-  ERC20_ABI,
 } from "@/lib/constants"
+import { DRAGONSWAP_ROUTER_ABI, ERC20_ABI } from "@/lib/abi"
 
 type SwapParams = {
   amountIn: string

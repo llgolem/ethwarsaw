@@ -1,11 +1,9 @@
 import { Types, Utils } from "@requestnetwork/request-client.js";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
-import { useAccount } from "wagmi";
 import { getRequestClient } from "./client";
 import { env } from "@/env.mjs";
 
 const network = "sepolia";
-const tokenAddress = "0x370DE27fdb7D1Ff1e1BaA7D11c5820a324Cf623C"; // FAU on sepolia
 const zeroAddress = "0x0000000000000000000000000000000000000000";
 
 interface CreateRequestParams {

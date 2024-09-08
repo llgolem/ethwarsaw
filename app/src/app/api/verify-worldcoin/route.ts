@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   ).then((res) => res.json());
 
   if (verifyRes.success) {
-    // I perform the verification when i return the success
+    // I perform the verification storage when i return the success
     return NextResponse.json({ success: true, verifyRes }, { status: 200 });
   } else {
     return NextResponse.json(verifyRes, { status: 400 });

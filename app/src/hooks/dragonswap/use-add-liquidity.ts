@@ -1,7 +1,6 @@
 import { toast } from "sonner"
 import {
   writeContract,
-  readContract,
   waitForTransactionReceipt,
 } from "wagmi/actions"
 import { config } from "@/lib/wagmi"
@@ -9,9 +8,8 @@ import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
 import {
   DRAGONSWAP_ROUTER_ADDRESS,
-  DRAGONSWAP_ROUTER_ABI,
-  ERC20_ABI,
 } from "@/lib/constants"
+import { DRAGONSWAP_ROUTER_ABI, ERC20_ABI } from "@/lib/abi"
 
 type AddLiquidityParams = {
   token: Address
