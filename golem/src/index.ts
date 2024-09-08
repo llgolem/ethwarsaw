@@ -1,8 +1,3 @@
-// https://stats.golem.network/network/providers/online
-
-// curl http://localhost:11111/v1/chat/completions -H "Content-Type: application/json" -d "{ \"model\": \"llama3.1\", \"messages\": [ { \"role\": \"user\", \"content\": \"What is a Golem Network?\" } ]}"
-// curl http://localhost:11111/v1/chat/completions -H "Content-Type: application/json" -d "{ \"model\": \"qwen2:0.5b\", \"messages\": [ { \"role\": \"user\", \"content\": \"What is a Golem Network?\" } ]}"
-
 import {
   GolemNetwork,
   TcpProxy,
@@ -52,14 +47,9 @@ const myProposalFilter = (proposal: OfferProposal): boolean => {
 
     if (proposal.provider.name == "<enter provider name here>") return true;
     else return false;
-
-    pve2m4
-    m3
   */
   if (proposal.provider.name == "m2") return true
   else return false
-
-  // return true
 }
 
 const glm = new GolemNetwork({
