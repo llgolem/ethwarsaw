@@ -157,7 +157,13 @@ export default function DashboardHeader({
             </DialogContent>
           </Dialog>
 
-          <ConnectKitButton />
+          <ConnectKitButton.Custom>
+            {({ isConnected, show, ensName, truncatedAddress }) => (
+              <Button onClick={show} variant="outline">
+                {isConnected ? ensName || truncatedAddress : "Connect Wallet"}
+              </Button>
+            )}
+          </ConnectKitButton.Custom>
         </div>
 
         <DropdownMenu>
