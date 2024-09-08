@@ -1,84 +1,64 @@
-# Sample Hardhat Project
+# _Walln
 
-## Tutorial
+![Walln](./assets/banner.png)
 
-<https://github.com/t4sk/hello-foundry>
+An LLM-powered chat to simplify your wallet interactions with a unique credit system.
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a Hardhat Ignition module that deploys that contract.
+## How to run
 
-Try running some of the following tasks:
+### Smart Contracts
 
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat ignition deploy ./ignition/modules/Lock.ts
-```
+1. Install dependencies:
+   ```bash
+   pnpm install
+   ```
 
-## Foundry
+2. Compile the contracts:
+   ```bash
+   npx hardhat compile
+   ```
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+3. Run tests:
+   ```bash
+   forge test
+   ```
 
-Foundry consists of:
+4. Deploy contracts:
+   ```bash
+   npx hardhat deploy --network <network-name>
+   ```
+   Replace `<network-name>` with the desired network (e.g., localhost, goerli, mainnet).
 
-- **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
-- **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
-- **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
-- **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+### Frontend App
 
-## Documentation
+1. Navigate to the app directory:
+   ```bash
+   cd app
+   ```
 
-<https://book.getfoundry.sh/>
+2. Install dependencies:
+   ```bash
+   pnpm install
+   ```
 
-## Usage
+3. Run the development server:
+   ```bash
+   pnpm run dev
+   ```
 
-### Build
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-```shell
-forge build
-```
+## Testing
 
-### Test
+### Smart Contracts
 
-```shell
+Run the test suite using Forge:
+
+```bash
 forge test
 ```
+For more detailed output, you can use:
 
-### Format
-
-```shell
-forge fmt
-```
-
-### Gas Snapshots
-
-```shell
-forge snapshot
-```
-
-### Anvil
-
-```shell
-anvil
-```
-
-### Deploy
-
-```shell
-forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-cast <subcommand>
-```
-
-### Help
-
-```shell
-forge --help
-anvil --help
-cast --help
+```bash
+forge test --vvvv
 ```
