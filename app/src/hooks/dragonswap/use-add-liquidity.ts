@@ -1,5 +1,9 @@
 import { toast } from "sonner"
-import { writeContract, readContract } from "wagmi/actions"
+import {
+  writeContract,
+  readContract,
+  waitForTransactionReceipt,
+} from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
@@ -28,27 +32,19 @@ export function useAddLiquidity() {
       amountSEIMin,
       to,
     }: AddLiquidityParams) => {
-      // Check allowance
-      const allowance = (await readContract(config, {
-        address: token,
-        abi: ERC20_ABI,
-        functionName: "allowance",
-        args: [to, DRAGONSWAP_ROUTER_ADDRESS],
-      })) as bigint
-
       const amountTokenDesiredBigInt = parseUnits(amountTokenDesired, 18)
 
-      // Approve if necessary
-      if (allowance < amountTokenDesiredBigInt) {
-        const approveResult = await writeContract(config, {
-          address: token,
-          abi: ERC20_ABI,
-          functionName: "approve",
-          args: [DRAGONSWAP_ROUTER_ADDRESS, amountTokenDesiredBigInt],
-        })
+      const approveResult = await writeContract(config, {
+        address: token,
+        abi: ERC20_ABI,
+        functionName: "approve",
+        args: [DRAGONSWAP_ROUTER_ADDRESS, amountTokenDesiredBigInt],
+      })
 
-        if (!approveResult) throw new Error("Failed to approve token")
-      }
+      // wait for approval to be set
+      await waitForTransactionReceipt(config, {
+        hash: approveResult,
+      })
 
       const deadline = BigInt(Math.floor(Date.now() / 1000) + 60 * 5) // 5 minutes from now
 
@@ -84,31 +80,3 @@ export function useAddLiquidity() {
     },
   })
 }
-
-// const { addLiquiditySEI } = useAddLiquidity()
-
-//   const testAddLiquidity = async (
-//   ) => {
-//     if (!address) {
-//       console.error('No address found')
-//       return
-//     }
-
-//     try {
-//       const tokenAmount = '100'
-//       const seiAmount = '0.1'
-
-//       await addLiquiditySEI.mutateAsync({
-//         token: SEI_GOLEM_TOKEN_ADDRESS,
-//         amountTokenDesired: tokenAmount,
-//         amountTokenMin: tokenAmount, // For simplicity, we're using the same amount for min
-//         amountSEIDesired: seiAmount,
-//         amountSEIMin: seiAmount, // For simplicity, we're using the same amount for min
-//         to: address,
-//       })
-
-//       console.log('Liquidity added successfully')
-//     } catch (error) {
-//       console.error('Error adding liquidity:', error)
-//     }
-//   }

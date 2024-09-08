@@ -184,8 +184,8 @@ export function Dashboard() {
   function getChainId(chainName: string): number {
     const chainMap: { [key: string]: number } = {
       sepolia: 11155111,
-      mantle: 5001,
-      zircuit: 2442,
+      mantle: 5003,
+      zircuit: 48899,
       celo: 44787,
       sei: 1328,
     }

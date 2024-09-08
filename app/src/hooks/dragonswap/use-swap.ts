@@ -1,5 +1,9 @@
 import { toast } from "sonner"
-import { writeContract, readContract } from "wagmi/actions"
+import {
+  writeContract,
+  readContract,
+  waitForTransactionReceipt,
+} from "wagmi/actions"
 import { config } from "@/lib/wagmi"
 import { useMutation } from "@tanstack/react-query"
 import { Address, parseUnits } from "viem"
@@ -45,6 +49,11 @@ export function useSwap() {
           abi: ERC20_ABI,
           functionName: "approve",
           args: [DRAGONSWAP_ROUTER_ADDRESS, amountInBigInt],
+        })
+
+        // wait for approval to be set
+        await waitForTransactionReceipt(config, {
+          hash: approveResult,
         })
 
         if (!approveResult) throw new Error("Failed to approve token")
